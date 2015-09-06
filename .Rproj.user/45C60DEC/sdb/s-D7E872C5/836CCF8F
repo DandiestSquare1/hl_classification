@@ -1,12 +1,12 @@
 {
-    "contents" : "rm(list = ls(all = TRUE)); gc()\n\n# devtools::install_github('martinbel/handy')\nlibrary(handy)\n\n\n",
+    "contents" : "# Just ignore th\n\nrm(list = ls(all = TRUE)); gc()\n\n# devtools::install_github('martinbel/handy')\nlibrary(handy)\nlibrary(data.table)\nlibrary(caret)\nlibrary(glmnet)\nlibrary(xgboost)\n\n# Read data \nDT <- read.csv('swingData_ES_1.50_v2.csv', sep=',')\nDT <- setDT(DT) # converts the data.frame to data.table\n\n# separate the target from the dataset\ntarget = DT[, 1, with=F]$swingRecordType\nDT[, swingRecordType:=NULL] # remove the column from the training data\n\nsetnames(DT, names(DT), gsub('[[:space:]]', '', names(DT)))\nsetnames(DT, names(DT), gsub('[[:punct:]]{1,}', '_', names(DT)))\n\nfor(j in names(DT))\n  set(DT, j=j, value=ifelse(grepl('TRUE', DT[[j]]), 1, 0))\nX_all = data.matrix(DT)\n\n# convert to vw format\ndata_types = handy::get_feature_type(X_all, threshold = 50)\nnamespaces = list(n = list(varName = data_types$num_vars, keepSpace=F),\n                  c = list(varName = data_types$fact_vars, keepSpace=F))\nX_all = cbind(target, X_all)\n\n# change function for multiclass.\ndt2vw(X_all[1:20000, ], 'X_test.vw', namespaces=namespaces, target='target')\ndt2vw(X_all[20001:nrow(X_all),], 'X_test.vw', namespaces, target='target')\n\ndt2vw(X_all)\n\n",
     "created" : 1441504247666.000,
     "dirty" : true,
     "encoding" : "LATIN1",
     "folds" : "",
-    "hash" : "3070281977",
+    "hash" : "1880371396",
     "id" : "836CCF8F",
-    "lastKnownWriteTime" : 1441508825,
+    "lastKnownWriteTime" : 1441509600,
     "path" : "~/Desktop/dm/free/09_september/hl_classification/vowpal_nn.R",
     "project_path" : "vowpal_nn.R",
     "properties" : {
