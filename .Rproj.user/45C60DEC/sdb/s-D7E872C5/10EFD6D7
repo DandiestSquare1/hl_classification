@@ -1,0 +1,18 @@
+{
+    "contents" : "# Script performs linear discriminant analysis for the formatted csv file.\n# The grouping factor is in the first column. It is a symbol of positive swing (peak), \n# negative swing (peak) or trend continuation.\n\ninstall.packages(\"sda\")\ninstall.packages(\"MASS\")\ninstall.packages(\"entropy\")\ninstall.packages(\"corpcor\")\ninstall.packages(\"fdrtool\")\ninstall.packages(\"lda\")\n\nlibrary(sda)\nlibrary(MASS)\nlibrary(entropy)\nlibrary(corpcor)\nlibrary(fdrtool)\nlibrary(lda)\n\n# function to hold on\nreadkey <- function()\n{\n  cat (\"\\nPress [enter] to continue...\")\n  line <- readline()\n}\n\n# Home directory \nhomedir <-\"C://Users//Neal//Documents//R\"\nsetwd(homedir)\n\n# Choosing the file to open \nfile.to.open <- file.choose()\n\n# Data frame from the chosen file\nraw.data <- read.csv(file.to.open, header = T)\n\n# Watch the import results. \n# Some data manipulation needed to get the correct values\n# Problems as data importes as string values\n# rowMeans(is.na(data)*1)\n# colMeans(is.na(data)*1)\n\n# Some transformations of the raw dataset\n\ndata<-raw.data\n\n# Check for missing values\nAny.NAs<- sum(colSums(is.na(data)*1))\nif (Any.NAs) {\n  cat(\"There are missing values\")\n  readkey()}\n\n# rowSums(is.na(data)*1)\n# char.data<-lapply(data,as.character)\n# nr.data<-lapply(data,numeric)\n\n\ncolumn_names<-names(raw.data)\n\n\nnew_names<-sub(pattern=\"*.indRange.RightStrength.\",\".\",column_names)\nnew_names[4:84]=substr(column_names[4:84],1,7)\n\nnames(data)<-new_names\n\n\n\n\ndata.numeric<-as.data.frame(lapply(data,as.integer))\n\n#peaks<-lapply(subset(data, select=1),as.factor)\n\n#peaks<-data[,1]\n\ntrain.set<-1:round(2/3*nrow(data.numeric))\nranking.DDA <- sda.ranking(as.matrix(data.numeric[train.set,c(2,4:287)]), data.numeric[train.set,1], diagonal=TRUE)\n\nnr.of.most.relevant<-nrow(ranking.DDA[ranking.DDA[,\"lfdr\"]<0.01,])\nmost.relevant=ranking.DDA[1:nr.of.most.relevant,1]\n\nlda_formula<- paste(\n  names(data.numeric[1]),\"~\",\n  paste(names(most.relevant),collapse=\" + \"),\n  sep=\" \"  )\n\n# lda.results<-lda(formula = lda_formula, data=data)\n\nlda.results<-lda(data.numeric[,names(most.relevant)]*1,grouping=data.numeric[,1],subset = train.set)\n\nswing.predictions1<-predict(lda.results, data.numeric[train.set,names(most.relevant)]*1)\nswing.predictions2<-predict(lda.results, data.numeric[-train.set,names(most.relevant)]*1)\n\ntrain.correct<-sum((swing.predictions1$class== data.numeric[train.set,1])*1)\ntrain.incorrect<-length(train.set)-train.correct\ntest.correct<-sum((swing.predictions2$class== data.numeric[-train.set,1])*1)\ntest.incorrect<-nrow(data.numeric)-length(train.set)-test.correct\ntrain.correctness<-train.correct/length(train.set)\ntest.correctness<-test.correct/(nrow(data.numeric)-length(train.set))\ncat(paste0(\"\\nCorrect classifications in the traing set: \",format(train.correctness*100,digits=4),\"%\\n\"))\ncat(paste0(\"Correct classifications in the test set: \",format(test.correctness*100,digits=4),\"%\\n\"))\n\n# show column names and their ordinality sorted by \"importance\" \nranking.DDA\n\n# show \"important\" column names and their ordinality \nmost.relevant \n\n# show avg. values for each \"important\" column/variable for all predicted classes \nlda.results",
+    "created" : 1441492452740.000,
+    "dirty" : false,
+    "encoding" : "LATIN1",
+    "folds" : "",
+    "hash" : "1322786516",
+    "id" : "10EFD6D7",
+    "lastKnownWriteTime" : 1441492464,
+    "path" : "~/Desktop/dm/free/09_september/hl_classification/lda.R",
+    "project_path" : "lda.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
