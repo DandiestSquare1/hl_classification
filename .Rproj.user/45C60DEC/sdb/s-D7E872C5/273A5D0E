@@ -1,0 +1,18 @@
+{
+    "contents" : "\n### Main script is 2xgboost.R\n- Ignore 1xgboost\n- Preprocess the data\n- Converts the TRUE-FALSE columns from character to numeric (1-0)\n- Fits a multinomial GBDT (gradient boosting decision tree) - Library xgboost\n- Fits a multinomial elastic net logistic regression\n- Fits a multinomial neural network\n- Finally blend results.",
+    "created" : 1441508823500.000,
+    "dirty" : false,
+    "encoding" : "LATIN1",
+    "folds" : "",
+    "hash" : "1438479188",
+    "id" : "273A5D0E",
+    "lastKnownWriteTime" : 1441509063,
+    "path" : "~/Desktop/dm/free/09_september/hl_classification/readme.md",
+    "project_path" : "readme.md",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "type" : "markdown"
+}
